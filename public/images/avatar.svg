@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="400" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#1e3a5f"/>
+      <stop offset="1" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="200" y1="80" x2="200" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3b82f6" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#3b82f6" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="500" fill="url(#bg)"/>
+  <ellipse cx="200" cy="180" rx="120" ry="130" fill="url(#glow)"/>
+  <circle cx="200" cy="175" r="72" fill="#334155"/>
+  <ellipse cx="200" cy="390" rx="110" ry="95" fill="#334155"/>
+  <text x="200" y="195" text-anchor="middle" fill="#e2e8f0" font-family="system-ui, sans-serif" font-size="52" font-weight="700">VB</text>
+</svg>
