@@ -1,52 +1,68 @@
-import { skillIcons } from './icons.ts'
+import { profile, certifications, communityItems, competitionItems } from './data.ts'
 
-const aboutTechIcons = [
-  { icon: 'java', label: 'Java', pos: 'about-orbit-1' },
-  { icon: 'react', label: 'React', pos: 'about-orbit-2' },
-  { icon: 'javascript', label: 'JS', pos: 'about-orbit-3' },
-  { icon: 'git', label: 'Git', pos: 'about-orbit-4' },
-  { icon: 'database', label: 'SQL', pos: 'about-orbit-5' },
-  { icon: 'api', label: 'API', pos: 'about-orbit-6' },
-]
-
-export function aboutItVisual() {
+export function renderBeyondSection(): string {
   return `
-    <div class="about-visual reveal-right" aria-hidden="true">
-      <div class="about-visual-glow"></div>
-      <div class="about-terminal">
-        <div class="about-terminal-header">
-          <span class="about-dot about-dot-red"></span>
-          <span class="about-dot about-dot-yellow"></span>
-          <span class="about-dot about-dot-green"></span>
-          <span class="about-terminal-title">vishnu@portfolio ~</span>
-        </div>
-        <div class="about-terminal-body">
-          <p><span class="about-code-keyword">const</span> <span class="about-code-var">developer</span> = {</p>
-          <p class="about-code-indent"><span class="about-code-key">name</span>: <span class="about-code-string">"Vishnutharan"</span>,</p>
-          <p class="about-code-indent"><span class="about-code-key">role</span>: <span class="about-code-string">"IT Student"</span>,</p>
-          <p class="about-code-indent"><span class="about-code-key">stack</span>: [<span class="about-code-string">"React"</span>, <span class="about-code-string">"Java"</span>, <span class="about-code-string">"MySQL"</span>],</p>
-          <p class="about-code-indent"><span class="about-code-key">passion</span>: <span class="about-code-string">"Building software"</span></p>
-          <p>}<span class="about-code-cursor">|</span></p>
-        </div>
+    <section id="beyond" class="section-container reveal">
+      <div class="section-label-row mb-12">
+        <p class="section-label">05 / BEYOND THE EDITOR</p>
+        <p class="section-super-heading">PEOPLE. PERSPECTIVE. PROGRESS.</p>
       </div>
-      <div class="about-orbit-wrap">
-        <div class="about-orbit-center">
-          <span class="about-orbit-code">&lt;/&gt;</span>
+
+      <div class="beyond-intro reveal mb-10">
+        <p class="beyond-intro-text">Code is only<br><span class="beyond-intro-accent">part of the story.</span></p>
+      </div>
+
+      <div class="beyond-grid stagger-group">
+
+        <!-- Education -->
+        <div class="beyond-card stagger-item">
+          <div class="beyond-card-index">01 / EDUCATION</div>
+          <div class="beyond-card-title">${profile.degree}</div>
+          <div class="beyond-card-body">
+            <p>${profile.faculty}, ${profile.university}</p>
+            <p>${profile.studyPeriod}</p>
+            <p class="beyond-card-note">${profile.honoursNote}</p>
+          </div>
         </div>
-        ${aboutTechIcons
-          .map(
-            (item) => `
-          <div class="about-orbit-icon ${item.pos}" title="${item.label}">
-            <span class="about-orbit-icon-inner">${skillIcons[item.icon] ?? skillIcons.api}</span>
-          </div>`
-          )
-          .join('')}
+
+        <!-- Certifications -->
+        <div class="beyond-card stagger-item">
+          <div class="beyond-card-index">02 / CERTIFICATIONS</div>
+          <div class="beyond-card-title">Always a student.</div>
+          <div class="beyond-card-body">
+            ${certifications
+              .map(
+                (cert) =>
+                  `<p class="beyond-cert-line"><span class="beyond-cert-name">${cert.name}</span> — <span class="beyond-cert-issuer">${cert.issuer}</span></p>`
+              )
+              .join('')}
+          </div>
+        </div>
+
+        <!-- Community -->
+        <div class="beyond-card stagger-item">
+          <div class="beyond-card-index">03 / COMMUNITY</div>
+          <div class="beyond-card-title">IEEE &amp; AIESEC — 2023 to present</div>
+          <div class="beyond-card-body">
+            ${communityItems.map((item) => `<p class="beyond-list-item">· ${item}</p>`).join('')}
+          </div>
+        </div>
+
+        <!-- Competition -->
+        <div class="beyond-card stagger-item">
+          <div class="beyond-card-index">04 / COMPETITION</div>
+          <div class="beyond-card-title">IEEEXtreme 17.0 &amp; 18.0</div>
+          <div class="beyond-card-body">
+            ${competitionItems.map((item) => `<p class="beyond-list-item">· ${item}</p>`).join('')}
+          </div>
+        </div>
+
       </div>
-      <div class="about-visual-tags">
-        <span class="about-visual-tag">BSc IT</span>
-        <span class="about-visual-tag">Full-Stack</span>
-        <span class="about-visual-tag">IEEE</span>
-      </div>
-    </div>
+    </section>
   `
+}
+
+// Legacy export kept so any old import doesn't break
+export function aboutItVisual(): string {
+  return renderBeyondSection()
 }

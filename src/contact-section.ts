@@ -1,212 +1,182 @@
 import { profile } from './data.ts'
-import { whatsappUrl, renderSocialButtons } from './social.ts'
+import { renderSocialButtons } from './social.ts'
 
 const mailIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>`
 const phoneIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>`
 const mapIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>`
-const linkedinIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 114.127 0 2.065 2.065 0 01-2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>`
-const githubIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>`
 
 const directContacts = [
   {
     href: `mailto:${profile.email}`,
     icon: mailIcon,
-    label: 'Email',
+    label: 'EMAIL',
     value: profile.email,
     external: false,
   },
   {
-    href: whatsappUrl(),
+    href: `tel:${profile.phone.replace(/\s/g, '')}`,
     icon: phoneIcon,
-    label: 'WhatsApp',
-    value: `+${profile.whatsapp}`,
-    external: true,
-  },
-  {
-    href: profile.linkedin,
-    icon: linkedinIcon,
-    label: 'LinkedIn',
-    value: 'Connect professionally',
-    external: true,
-  },
-  {
-    href: profile.github,
-    icon: githubIcon,
-    label: 'GitHub',
-    value: '@vishnu-tharan',
-    external: true,
+    label: 'PHONE',
+    value: profile.phone,
+    external: false,
   },
   {
     href: '#',
     icon: mapIcon,
-    label: 'Location',
-    value: profile.location,
+    label: 'AVAILABILITY',
+    value: profile.availability,
     external: false,
     static: true,
   },
 ]
 
-export function renderContactSection() {
+const discussOptions = [
+  'An internship opportunity',
+  'A project collaboration',
+  'A question about your work',
+  'Something else',
+]
+
+export function renderContactSection(): string {
   return `
-    <div class="mb-12 reveal">
-      <p class="section-label mb-4">Contact</p>
-      <h2 class="section-heading">Let's work together</h2>
-      <p class="mt-4 max-w-2xl text-[var(--color-muted)]">
-        Have a project idea, internship opportunity, or collaboration in mind? Reach out directly or send a message — I'll get back to you as soon as possible.
-      </p>
-    </div>
+    <section id="contact" class="section-container">
 
-    <div class="grid gap-10 lg:grid-cols-[1fr_1.15fr]">
-      <div class="reveal-left space-y-6">
-        <div class="contact-direct-grid">
-          ${directContacts
-            .map(
-              (item) => `
-            ${
-              item.static
-                ? `<div class="contact-direct-card contact-direct-static">
-                    <div class="contact-direct-icon">${item.icon}</div>
-                    <div>
-                      <p class="contact-direct-label">${item.label}</p>
-                      <p class="contact-direct-value">${item.value}</p>
-                    </div>
-                  </div>`
-                : `<a href="${item.href}" ${item.external ? 'target="_blank" rel="noopener noreferrer"' : ''} class="contact-direct-card">
-                    <div class="contact-direct-icon">${item.icon}</div>
-                    <div>
-                      <p class="contact-direct-label">${item.label}</p>
-                      <p class="contact-direct-value">${item.value}</p>
-                    </div>
-                  </a>`
-            }`
-            )
-            .join('')}
+      <div class="contact-section-inner">
+        <!-- Left panel -->
+        <div class="contact-left reveal">
+          <p class="section-label">06 / THE NEXT CHAPTER</p>
+          <p class="contact-super">STARTS WITH A CONVERSATION</p>
+          <p class="contact-open-tag">OPEN TO INTERNSHIPS</p>
+          <h2 class="contact-heading">Let's build<br>what's next.</h2>
+          <p class="contact-sub">
+            Looking for a curious developer to join your team? I'm open to full-stack, frontend, and backend internship opportunities — remotely worldwide or on-site in Sri Lanka. Get in touch about a role, a project, or a question about my work.
+          </p>
+
+          <div class="contact-direct-links">
+            ${directContacts
+              .map(
+                (c) =>
+                  c.static
+                    ? `<div class="contact-direct-item contact-direct-static">
+                        <span class="contact-direct-icon">${c.icon}</span>
+                        <span class="contact-direct-body">
+                          <span class="contact-direct-label">${c.label}</span>
+                          <span class="contact-direct-value">${c.value}</span>
+                        </span>
+                      </div>`
+                    : `<a href="${c.href}" class="contact-direct-item" ${c.external ? 'target="_blank" rel="noopener noreferrer"' : ''}>
+                        <span class="contact-direct-icon">${c.icon}</span>
+                        <span class="contact-direct-body">
+                          <span class="contact-direct-label">${c.label}</span>
+                          <span class="contact-direct-value contact-direct-link-text">${c.value} ↗</span>
+                        </span>
+                      </a>`
+              )
+              .join('')}
+          </div>
+
+          <div class="contact-social-row mt-6">
+            ${renderSocialButtons()}
+          </div>
         </div>
 
-        ${profile.available ? `
-          <div class="contact-available">
-            <span class="status-dot"></span>
-            <span>Available for internships & freelance projects</span>
-          </div>` : ''}
+        <!-- Right panel — form -->
+        <div class="contact-right reveal">
+          <div class="contact-form-card">
+            <p class="contact-form-heading">LET'S CONNECT</p>
+            <p class="contact-form-subheading">What's on your mind?</p>
+            <p class="contact-form-note">All fields are required. This form prepares an email in your email app. Review it there and press Send.</p>
 
-        <div>
-          <p class="section-label mb-4">Social profiles</p>
-          ${renderSocialButtons()}
+            <form id="contact-form" class="contact-form" novalidate>
+              <div class="form-group">
+                <label for="contact-name" class="form-label">Your name</label>
+                <input
+                  type="text"
+                  id="contact-name"
+                  name="name"
+                  class="form-input"
+                  placeholder="Your name"
+                  required
+                  autocomplete="name"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="contact-email" class="form-label">Your email</label>
+                <input
+                  type="email"
+                  id="contact-email"
+                  name="email"
+                  class="form-input"
+                  placeholder="Your email"
+                  required
+                  autocomplete="email"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="contact-subject" class="form-label">I'd like to discuss</label>
+                <select id="contact-subject" name="subject" class="form-input form-select" required>
+                  <option value="" disabled selected>Select a topic</option>
+                  ${discussOptions.map((o) => `<option value="${o}">${o}</option>`).join('')}
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="contact-message" class="form-label">Your message</label>
+                <textarea
+                  id="contact-message"
+                  name="message"
+                  class="form-input form-textarea"
+                  placeholder="Your message"
+                  rows="5"
+                  required
+                ></textarea>
+              </div>
+
+              <div id="contact-error" class="form-error hidden">Please fill in all fields.</div>
+
+              <button type="submit" class="btn-primary btn-magnetic w-full justify-center mt-2">
+                OPEN EMAIL APP ↗
+              </button>
+            </form>
+
+            <p class="contact-form-fallback mt-4">
+              Prefer to write directly?
+              <a href="mailto:${profile.email}" class="contact-inline-link">Email me</a>
+              or
+              <a href="tel:${profile.phone.replace(/\s/g, '')}" class="contact-inline-link">call me</a>.
+            </p>
+          </div>
         </div>
       </div>
-
-      <div class="contact-form-box reveal-right">
-        <h3 class="contact-form-title">Send a message</h3>
-        <p class="contact-form-sub">Fill in the form below and it will be delivered to my inbox.</p>
-
-        <form id="contact-form" class="contact-form" novalidate>
-          <input type="text" name="_honey" class="contact-honey" tabindex="-1" autocomplete="off" aria-hidden="true" />
-
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label" for="contact-name">Full name</label>
-              <input type="text" id="contact-name" name="name" class="form-input" placeholder="Your name" required />
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="contact-email">Email address</label>
-              <input type="email" id="contact-email" name="email" class="form-input" placeholder="you@email.com" required />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="contact-subject">Subject</label>
-            <select id="contact-subject" name="subject" class="form-input form-select" required>
-              <option value="" disabled selected>Select a topic</option>
-              <option value="Internship Opportunity">Internship Opportunity</option>
-              <option value="Project Collaboration">Project Collaboration</option>
-              <option value="Freelance Work">Freelance Work</option>
-              <option value="General Inquiry">General Inquiry</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="contact-message">Message</label>
-            <textarea id="contact-message" name="message" class="form-input form-textarea" rows="5" placeholder="Tell me about your project or opportunity..." required></textarea>
-          </div>
-
-          <button type="submit" id="contact-submit" class="btn-primary w-full justify-center">
-            <span class="contact-submit-text">Send Message</span>
-            <span class="contact-submit-loading hidden">Sending...</span>
-          </button>
-
-          <p id="contact-status" class="contact-status" role="status" aria-live="polite"></p>
-        </form>
-      </div>
-    </div>
+    </section>
   `
 }
 
-export function initContactForm() {
-  const form = document.querySelector<HTMLFormElement>('#contact-form')
-  const status = document.querySelector<HTMLParagraphElement>('#contact-status')
-  const submitBtn = document.querySelector<HTMLButtonElement>('#contact-submit')
-  const submitText = submitBtn?.querySelector('.contact-submit-text')
-  const submitLoading = submitBtn?.querySelector('.contact-submit-loading')
+export function initContactForm(): void {
+  const form = document.getElementById('contact-form') as HTMLFormElement | null
+  if (!form) return
 
-  if (!form || !status || !submitBtn) return
-
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', (e) => {
     e.preventDefault()
-
-    const honey = form.querySelector<HTMLInputElement>('input[name="_honey"]')
-    if (honey?.value) return
 
     const name = (form.querySelector('#contact-name') as HTMLInputElement).value.trim()
     const email = (form.querySelector('#contact-email') as HTMLInputElement).value.trim()
     const subject = (form.querySelector('#contact-subject') as HTMLSelectElement).value
     const message = (form.querySelector('#contact-message') as HTMLTextAreaElement).value.trim()
+    const errorEl = document.getElementById('contact-error')
 
     if (!name || !email || !subject || !message) {
-      status.textContent = 'Please fill in all required fields.'
-      status.className = 'contact-status contact-status-error'
+      errorEl?.classList.remove('hidden')
       return
     }
+    errorEl?.classList.add('hidden')
 
-    submitBtn.disabled = true
-    submitText?.classList.add('hidden')
-    submitLoading?.classList.remove('hidden')
-    status.textContent = ''
-    status.className = 'contact-status'
-
-    try {
-      const res = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(profile.email)}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          email,
-          subject,
-          message,
-          _subject: `Portfolio Contact: ${subject}`,
-          _template: 'table',
-          _captcha: 'false',
-        }),
-      })
-
-      const data = await res.json()
-
-      if (data.success) {
-        status.textContent = 'Message sent successfully! I will reply to your email soon.'
-        status.className = 'contact-status contact-status-success'
-        form.reset()
-      } else {
-        throw new Error('Send failed')
-      }
-    } catch {
-      status.textContent = 'Could not send message. Please email me directly using the link on the left.'
-      status.className = 'contact-status contact-status-error'
-    } finally {
-      submitBtn.disabled = false
-      submitText?.classList.remove('hidden')
-      submitLoading?.classList.add('hidden')
-    }
+    const body = encodeURIComponent(
+      `Hi Vishnu,\n\nI'd like to discuss: ${subject}\n\n${message}\n\nFrom: ${name}\nEmail: ${email}`
+    )
+    const mailtoLink = `mailto:${profile.email}?subject=${encodeURIComponent(subject)}&body=${body}`
+    window.location.href = mailtoLink
   })
 }

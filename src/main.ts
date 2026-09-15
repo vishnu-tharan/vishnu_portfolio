@@ -3,26 +3,21 @@ import {
   profile,
   stats,
   projects,
-  organizations,
   navLinks,
   marqueeTech,
 } from './data.ts'
 import { initAnimations, initHeroEntrance } from './animations.ts'
 import { initUi } from './ui.ts'
-import { aboutItVisual } from './about-visual.ts'
+import { renderBeyondSection } from './about-visual.ts'
 import { renderSocialIcons } from './social.ts'
 import { renderSkillsSection, initSkillFilters } from './skills-section.ts'
 import { renderContactSection, initContactForm } from './contact-section.ts'
-import { renderJourneySection } from './journey-section.ts'
+import { renderJourneySection, initJourneyKeyboard } from './journey-section.ts'
 
 const socialIcons = renderSocialIcons()
 
 function externalLinkSvg() {
   return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>`
-}
-
-function arrowRightSvg() {
-  return `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`
 }
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -38,10 +33,10 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <header class="site-header sticky top-0 z-50">
       <div class="nav-bar">
         <a href="#home" class="nav-brand" aria-label="${profile.name} — Home">
-          <span class="nav-brand-mark">VB</span>
+          <span class="nav-brand-mark">V</span>
           <span class="nav-brand-text">
-            <span class="nav-brand-name">${profile.shortName}</span>
-            <span class="nav-brand-role">Portfolio</span>
+            <span class="nav-brand-name">${profile.displayName}</span>
+            <span class="nav-brand-role">Full-Stack Developer</span>
           </span>
         </a>
 
@@ -58,7 +53,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
         <div class="nav-actions">
           <button type="button" class="nav-icon-btn" data-theme-toggle data-theme-icon aria-label="Switch to light mode"></button>
-          <a href="#contact" class="nav-cta btn-primary">Let's Talk</a>
+          <a href="#contact" class="nav-cta btn-primary">LET'S TALK ↗</a>
           <button
             type="button"
             id="menu-toggle"
@@ -89,7 +84,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
               .join('')}
           </ul>
           <div class="nav-mobile-footer">
-            <a href="#contact" class="btn-primary w-full justify-center mobile-nav-link">Let's Talk</a>
+            <a href="#contact" class="btn-primary w-full justify-center mobile-nav-link">LET'S TALK ↗</a>
             <p class="nav-mobile-note">${profile.role}</p>
           </div>
         </nav>
@@ -97,40 +92,80 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     </header>
 
     <main>
-      <!-- Hero -->
-      <section id="home" class="relative py-20 md:py-28 overflow-hidden">
-        <div class="container">
-          <div class="grid items-center gap-12 lg:grid-cols-2">
-            <div>
-              ${profile.available ? `<div class="status-badge hero-enter hero-enter-1 mb-6"><span class="status-dot"></span> Open to internships & collaborations</div>` : ''}
-              <p class="font-mono text-sm text-[var(--color-accent)] mb-4 hero-enter hero-enter-2">Hello, I'm</p>
-              <h1 class="mb-4 text-4xl font-bold leading-tight tracking-tight md:text-5xl lg:text-6xl hero-enter hero-enter-3">
-                <span class="gradient-text">${profile.shortName}</span>
-              </h1>
-              <h2 class="mb-6 text-xl font-medium md:text-2xl hero-enter hero-enter-4">
-                <span class="gradient-text-accent typing-cursor" id="typing-role"></span>
-              </h2>
-              <p class="mb-8 max-w-lg text-base leading-relaxed text-[var(--color-muted)] hero-enter hero-enter-5">
-                ${profile.tagline}
-              </p>
-              <div class="flex flex-wrap gap-4 mb-10 hero-enter hero-enter-6">
-                <a href="#projects" class="btn-primary">View Projects ${arrowRightSvg()}</a>
-                <a href="${profile.linkedin}" target="_blank" rel="noopener noreferrer" class="btn-secondary">LinkedIn ${externalLinkSvg()}</a>
-              </div>
-              <div class="flex items-center gap-4 hero-enter hero-enter-7">
-                <span class="text-sm text-[var(--color-muted)]">Connect:</span>
-                ${socialIcons}
-              </div>
+      <!-- ══════════════════════════════════════════════════════
+           HERO  — Section 01
+      ══════════════════════════════════════════════════════ -->
+      <section id="home" class="hero-section relative overflow-hidden">
+        <div class="container hero-container">
+
+          <!-- Left: text block -->
+          <div class="hero-text-col">
+            ${profile.available ? `<div class="status-badge hero-enter hero-enter-1 mb-6"><span class="status-dot"></span> REMOTE WORLDWIDE</div>` : ''}
+
+            <p class="hero-hello hero-enter hero-enter-2">HELLO, WORLD. I'M</p>
+
+            <h1 class="hero-name hero-enter hero-enter-3">
+              <span class="hero-name-plus">+</span>${profile.displayName}<span class="hero-name-dot">.</span>
+            </h1>
+
+            <h2 class="hero-role-line hero-enter hero-enter-4">
+              <span class="hero-role-primary">FULL-STACK DEVELOPER</span>
+              <span class="hero-role-sep"> &amp; </span>
+              <span class="typing-cursor" id="typing-role"></span>
+            </h2>
+
+            <div class="hero-code-block hero-enter hero-enter-5" aria-hidden="true">
+              <pre class="hero-code"><span class="code-kw">const</span> developer = {
+  name: <span class="code-str">"Vishnu"</span>,
+  focus: <span class="code-str">"full-stack"</span>,
+  remote: <span class="code-str">"Worldwide"</span>,
+  onSite: <span class="code-str">"Sri Lanka"</span>
+};
+
+<span class="code-kw">async function</span> <span class="code-fn">build</span>() {
+  <span class="code-kw">const</span> idea = <span class="code-kw">await</span> imagine();
+  <span class="code-kw">return</span> create(idea);
+}
+
+<span class="code-kw">while</span> (curious) {
+  learn(); build(); improve();
+}</pre>
             </div>
-            <div class="flex justify-center lg:justify-end hero-enter hero-enter-5">
-              <div class="hero-photo-wrap">
-                <span class="floating-badge floating-badge-1">BSc IT</span>
-                <span class="floating-badge floating-badge-2">IEEEan</span>
-                <span class="floating-badge floating-badge-3">AIESEC</span>
-                <img src="${profile.photo}" alt="${profile.name}" class="hero-photo" />
-              </div>
+
+            <div class="hero-ctas hero-enter hero-enter-6">
+              <a href="#work" class="btn-primary btn-magnetic">EXPLORE MY WORK ↗</a>
+              <a href="${profile.github}" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-magnetic">
+                GitHub ${externalLinkSvg()}
+              </a>
+            </div>
+
+            <p class="hero-scroll-hint hero-enter hero-enter-7">SCROLL TO ENTER ↓</p>
+          </div>
+
+          <!-- Right: photo + name block -->
+          <div class="hero-photo-col hero-enter hero-enter-4">
+            <div class="hero-photo-wrap">
+              <img
+                src="${profile.photo}"
+                alt="${profile.name}"
+                class="hero-photo"
+              />
+              <a href="${profile.github}" target="_blank" rel="noopener noreferrer" class="hero-photo-label">
+                Show original photo ↗
+              </a>
+            </div>
+            <div class="hero-name-block">
+              <p class="hero-full-name">${profile.name.toUpperCase()}</p>
+              <p class="hero-full-location">${profile.availability.toUpperCase()}</p>
             </div>
           </div>
+
+        </div>
+
+        <!-- Section indicators -->
+        <div class="hero-section-tags" aria-hidden="true">
+          <span class="hero-section-tag active">01 / THE INTRODUCTION</span>
+          <span class="hero-section-tag">02 / MY UNIVERSE</span>
         </div>
       </section>
 
@@ -141,146 +176,178 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
         </div>
       </div>
 
-      <!-- About & Stats -->
-      <section id="about" class="relative border-t border-[var(--color-border)] py-20 md:py-28">
+      <!-- ══════════════════════════════════════════════════════
+           ABOUT  — Section 01 / THE INTRODUCTION
+      ══════════════════════════════════════════════════════ -->
+      <section id="about" class="section-border py-20 md:py-28">
         <div class="container">
           <div class="mb-12 reveal">
-            <p class="section-label mb-4">About Me</p>
-            <h2 class="section-heading">Nice to meet you, I'm <span class="gradient-text-accent">${profile.name.split(' ')[0]}</span></h2>
+            <p class="section-label">01 / THE INTRODUCTION</p>
           </div>
-          <div class="grid items-center gap-12 lg:grid-cols-[1fr_auto]">
-            <div class="reveal-left">
-              <div class="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-group">
+
+          <div class="about-layout">
+            <!-- About text -->
+            <div class="about-text-col reveal-left">
+              <h2 class="about-tagline">${profile.tagline}</h2>
+              <p class="about-bio mt-6">${profile.about}</p>
+
+              <div class="about-stats stagger-group mt-10">
                 ${stats
                   .map(
                     (stat) => `
                   <div class="stat-card stagger-item">
-                    <p class="text-3xl font-bold md:text-4xl">
-                      <span data-count="${stat.value}">0</span><span class="stat-plus">+</span>
-                    </p>
-                    <p class="mt-2 text-sm text-[var(--color-muted)]">${stat.label}</p>
+                    <p class="stat-value"><span data-count="${stat.value}">0</span><span class="stat-plus">+</span></p>
+                    <p class="stat-label">${stat.label}</p>
                   </div>`
                   )
                   .join('')}
               </div>
-              <p class="max-w-2xl text-base leading-relaxed text-[var(--color-muted)] mb-6">${profile.about}</p>
-              <div class="glass-card inline-flex flex-col gap-2 p-4">
-                <p class="text-sm font-semibold">${profile.education.degree}</p>
-                <p class="text-sm text-[var(--color-muted)]">${profile.education.school} · ${profile.education.period}</p>
-                <p class="font-mono text-xs text-[var(--color-accent)]">${profile.education.focus}</p>
+
+              <div class="about-edu-card mt-10 reveal">
+                <p class="about-edu-degree">${profile.degree}</p>
+                <p class="about-edu-school">${profile.faculty}, ${profile.university}</p>
+                <p class="about-edu-period">${profile.studyPeriod}</p>
+                <p class="about-edu-note">${profile.honoursNote}</p>
               </div>
-              <p class="mt-4 flex items-center gap-2 text-sm text-[var(--color-muted)]">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                ${profile.location}
-              </p>
             </div>
-            ${aboutItVisual()}
+
+            <!-- Availability pill -->
+            <div class="about-availability-col reveal-right">
+              <div class="about-avail-card">
+                <span class="status-dot"></span>
+                <p class="about-avail-label">Available</p>
+                <p class="about-avail-text">${profile.availability}</p>
+                <p class="about-avail-note">${profile.availabilityNote}</p>
+                <a href="#contact" class="btn-primary btn-magnetic mt-4">Remote worldwide ↗</a>
+                <div class="about-social-row mt-4">${socialIcons}</div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Journey -->
-      <section id="journey" class="relative border-t border-[var(--color-border)] py-20 md:py-28">
+      <!-- ══════════════════════════════════════════════════════
+           SKILLS  — Section 02 / MY UNIVERSE
+      ══════════════════════════════════════════════════════ -->
+      <section id="skills" class="section-border py-20 md:py-28">
+        <div class="container">
+          ${renderSkillsSection()}
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           JOURNEY  — Section 03 / THE TIME MACHINE
+      ══════════════════════════════════════════════════════ -->
+      <section id="journey" class="section-border py-20 md:py-28">
         <div class="container">
           ${renderJourneySection()}
         </div>
       </section>
 
-      <!-- Skills -->
-      <section id="skills" class="relative border-t border-[var(--color-border)] py-20 md:py-28">
-        <div class="container">
-          ${renderSkillsSection()}
-
-          <!-- Organizations -->
-          <div class="mt-16 grid gap-6 md:grid-cols-2 stagger-group reveal">
-            ${organizations
-              .map(
-                (org) => `
-              <div class="org-card stagger-item">
-                <div class="mb-3 flex items-center gap-3">
-                  <span class="text-2xl">${org.icon}</span>
-                  <div>
-                    <h3 class="font-semibold">${org.name}</h3>
-                    <p class="text-sm text-[var(--color-accent)]">${org.role}</p>
-                  </div>
-                </div>
-                <p class="text-sm leading-relaxed text-[var(--color-muted)]">${org.description}</p>
-              </div>`
-              )
-              .join('')}
-          </div>
-        </div>
-      </section>
-
-      <!-- Projects -->
-      <section id="projects" class="relative border-t border-[var(--color-border)] py-20 md:py-28">
+      <!-- ══════════════════════════════════════════════════════
+           WORK  — Section 04 / SELECTED WORK
+      ══════════════════════════════════════════════════════ -->
+      <section id="work" class="section-border py-20 md:py-28">
         <div class="container">
           <div class="mb-12 reveal">
-            <p class="section-label mb-4">Portfolio</p>
-            <h2 class="section-heading">Featured projects & academic work</h2>
-            <p class="mt-4 max-w-xl text-[var(--color-muted)]">A selection of web apps, Java systems, and creative work from my IT journey.</p>
+            <p class="section-label">04 / SELECTED WORK</p>
+            <p class="section-super-heading">EXPERIMENTS THAT BECAME SYSTEMS</p>
+            <h2 class="section-heading mt-4">Ideas, made real.</h2>
+            <p class="section-sub mt-2">A selection of platforms, services, and experiments.<br>Built with curiosity. Refined through doing.</p>
           </div>
-          <div class="reveal-scale">
-          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 stagger-group">
+
+          <div class="projects-grid stagger-group reveal-scale">
             ${projects
               .map(
                 (project) => `
-              <article class="project-card stagger-item ${project.featured ? 'featured' : ''}">
-                <div class="project-image-wrap">
-                  <img src="${project.image}" alt="${project.title} preview" class="project-image" loading="lazy" />
-                  <div class="project-image-overlay"></div>
-                  <span class="project-image-tag">${project.tag}</span>
+              <article class="project-card stagger-item${project.featured ? ' featured' : ''}">
+                <!-- Card header -->
+                <div class="project-card-header bg-gradient-to-br ${project.gradient}">
+                  <span class="project-card-symbol">${project.cardSymbol}</span>
+                  <span class="project-card-arrow">↗</span>
                 </div>
-                <div class="p-6 project-body">
-                  <h3 class="mb-3 text-xl font-bold">${project.title}</h3>
-                  <p class="mb-4 text-sm leading-relaxed text-[var(--color-muted)]">${project.description}</p>
-                  <div class="mb-5 flex flex-wrap gap-2">
+
+                <!-- Card body -->
+                <div class="project-card-body">
+                  <div class="project-card-meta">
+                    <span class="project-card-category">${project.category}</span>
+                    <span class="project-card-tag">${project.tag}</span>
+                  </div>
+
+                  <h3 class="project-card-title">${project.cardName}</h3>
+                  <p class="project-card-tagline">${project.cardTagline}</p>
+                  <p class="project-card-desc">${project.description}</p>
+
+                  <div class="project-tech-row">
                     ${project.tech.map((t) => `<span class="tech-tag">${t}</span>`).join('')}
                   </div>
-                  <div class="flex gap-4">
-                    ${project.github ? `<a href="${project.github}" class="project-link">${externalLinkSvg()} GitHub</a>` : ''}
-                    ${project.demo ? `<a href="${project.demo}" class="project-link">${externalLinkSvg()} Live Demo</a>` : ''}
+
+                  <div class="project-card-footer">
+                    <span class="project-card-keyword">${project.cardKeyword}</span>
+                    <div class="project-links">
+                      ${project.github ? `<a href="${project.github}" target="_blank" rel="noopener noreferrer" class="project-link btn-magnetic">GitHub ${externalLinkSvg()}</a>` : ''}
+                      ${project.demo ? `<a href="${project.demo}" target="_blank" rel="noopener noreferrer" class="project-link btn-magnetic">Live ${externalLinkSvg()}</a>` : ''}
+                    </div>
                   </div>
                 </div>
               </article>`
               )
               .join('')}
           </div>
+
+          <div class="projects-github-cta reveal mt-12">
+            <p class="projects-github-text">THERE'S MORE IN THE REPOSITORIES</p>
+            <a href="${profile.github}" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-magnetic">
+              Explore my GitHub ↗
+            </a>
           </div>
         </div>
       </section>
 
-      <!-- Contact -->
-      <section id="contact" class="relative border-t border-[var(--color-border)] py-20 md:py-28">
+      <!-- ══════════════════════════════════════════════════════
+           BEYOND THE EDITOR  — Section 05
+      ══════════════════════════════════════════════════════ -->
+      <section id="beyond" class="section-border py-20 md:py-28">
+        <div class="container">
+          ${renderBeyondSection()}
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════
+           CONTACT  — Section 06 / THE NEXT CHAPTER
+      ══════════════════════════════════════════════════════ -->
+      <section id="contact" class="section-border py-20 md:py-28">
         <div class="container">
           ${renderContactSection()}
         </div>
       </section>
     </main>
 
-    <footer class="border-t border-[var(--color-border)] py-8">
-      <div class="container flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <p class="font-mono text-sm text-[var(--color-muted)]">
-          &copy; ${new Date().getFullYear()} ${profile.name} · Built with passion
-        </p>
-        <div class="flex gap-2">${socialIcons}</div>
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-brand">
+          <span class="footer-name">${profile.displayName}</span>
+          <span class="footer-copy">© ${new Date().getFullYear()} ${profile.name}</span>
+        </div>
+        <div class="footer-links">
+          <a href="${profile.github}" target="_blank" rel="noopener noreferrer" class="footer-link">GITHUB ↗</a>
+          <button type="button" id="back-to-top" class="footer-link">BACK TO TOP ↑</button>
+        </div>
       </div>
     </footer>
   </div>
-
-  <button type="button" id="back-to-top" class="back-to-top" aria-label="Back to top">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-  </button>
 `
 
-// Init animations
+// ─── Initialise ────────────────────────────────────────────────────────────────
 initHeroEntrance()
 initAnimations()
 initUi()
 initSkillFilters()
 initContactForm()
+initJourneyKeyboard()
 
-// Mobile menu
+// ─── Mobile menu ──────────────────────────────────────────────────────────────
 const menuToggle = document.querySelector<HTMLButtonElement>('#menu-toggle')
 const mobileMenu = document.querySelector<HTMLElement>('#mobile-menu')
 
@@ -309,7 +376,12 @@ window.addEventListener('resize', () => {
   if (window.innerWidth >= 768) setMobileMenuOpen(false)
 })
 
-// Active nav
+// ─── Back to top ──────────────────────────────────────────────────────────────
+document.getElementById('back-to-top')?.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+})
+
+// ─── Active nav highlight ─────────────────────────────────────────────────────
 const sections = document.querySelectorAll('section[id]')
 const navLinksEls = document.querySelectorAll('.nav-link')
 
